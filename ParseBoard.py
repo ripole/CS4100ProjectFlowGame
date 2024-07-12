@@ -20,10 +20,10 @@ def read_boards(filename):
 
     return boards
 
-boards = read_boards('Puzzles/8by8Puzzles.txt')
-for board in boards:
-    for row in board:
-        print(''.join(row))
-    print()
-    print(board)
-    print()
+# boards = read_boards('Puzzles/8by8Puzzles.txt')
+# for board in boards:
+#     for row in board:
+#         print(''.join(row))
+#     print()
+#     print(board)
+#     print()
