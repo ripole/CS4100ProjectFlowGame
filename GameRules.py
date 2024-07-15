@@ -85,6 +85,7 @@ class Board:
         original.next = new
         new.color = original.color
         new.previous = original
+        new.next = None
 
 
 test_board = Board(board=board)
