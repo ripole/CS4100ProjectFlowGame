@@ -70,7 +70,7 @@ class Board:
             raise Exception("Not a valid position")
         original = board[x][y]
         new = board[i][j]
-        #Makes sure that the nodes are adjacent
+        #Makes sure that the cells are adjacent
         if np.absolute(x - i) != 1 or np.absolute(y - j) != 1:
             raise Exception("Not a continous path")
         #Checks for mulitdirectional pathing from a root
