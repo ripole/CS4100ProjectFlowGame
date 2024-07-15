@@ -42,8 +42,8 @@ class Node:
 class Board:
     def __init__(self, board):
         self.board = [
-            [Node(board[x][y], x, y) for y in range(self.cols)]
-            for x in range(self.rows)
+            [Node(board[x][y], x, y) for y in range(len(board[0]))]
+            for x in range(len(board))
         ]
 
     def validPos(self, x, y):
