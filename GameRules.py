@@ -88,7 +88,7 @@ class Board:
         new.next = None
 
     #Checks to see if starting root is a connected to the ending node
-    def connectedPath(x,y):
+    def connectedPath(self,x,y):
         node = self.board[x][y]
         flag = False
         if not node.root:
@@ -100,7 +100,7 @@ class Board:
         return flag
 
     #Checks to see if the board is completed
-    def gameOver():
+    def gameOver(self):
         for x in self.board.size:
             for y in self.board[0].size:
                 if self.board[x][y].root:
