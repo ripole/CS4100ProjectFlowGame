@@ -68,9 +68,9 @@ class Board:
     def extendPath(self, x, y, i, j):
         if not self.validPos(i, j):
             raise Exception("Not a valid position")
-        original = board[x][y]
-        new = board[i][j]
-        #Makes sure that the cells are adjacent
+        original = self.board[x][y]
+        new = self.board[i][j]
+        #Makes sure that the nodes are adjacent
         if np.absolute(x - i) != 1 or np.absolute(y - j) != 1:
             raise Exception("Not a continous path")
         #Checks for mulitdirectional pathing from a root
@@ -87,6 +87,26 @@ class Board:
         new.previous = original
         new.next = None
 
+    #Checks to see if starting root is a connected to the ending node
+    def connectedPath(x,y):
+        node = self.board[x][y]
+        flag = False
+        if not node.root:
+            raise Exception("connectedPath must start on root node")
+        while node.next != None:
+            if node.next.root:
+                flag = True
+            node = node.next
+        return flag
+
+    #Checks to see if the board is completed
+    def gameOver():
+        for x in self.board.size:
+            for y in self.board[0].size:
+                if self.board[x][y].root:
+                    if not connectedPath(x,y):
+                        return False
+        return True
 
 test_board = Board(board=board)
 
