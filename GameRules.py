@@ -2,7 +2,7 @@ from ParseBoard import read_boards
 import numpy as np
 
 boards = read_boards("Puzzles/8by8Puzzles.txt")
-board = boards[0]
+test_board = boards[0]
 
 
 class Node:
@@ -36,7 +36,6 @@ class Node:
             # add colors as needed
         }
         return color_mapping.get(self.value, (169, 169, 169))
-
 
 
 class Board:
@@ -88,7 +87,7 @@ class Board:
         new.next = None
 
     #Checks to see if starting root is a connected to the ending node
-    def connectedPath(self,x,y):
+    def connectedPath(self, x, y):
         node = self.board[x][y]
         flag = False
         if not node.root:
@@ -104,11 +103,12 @@ class Board:
         for x in self.board.size:
             for y in self.board[0].size:
                 if self.board[x][y].root:
-                    if not connectedPath(x,y):
+                    if not self.connectedPath(x, y):
                         return False
         return True
 
-test_board = Board(board=board)
+
+test_board = Board(board=test_board)
 
 # board = np.array([1,2,3,4])
 # board.size
