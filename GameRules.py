@@ -37,6 +37,7 @@ class Node:
         self.root = self.value != "."
         self.previous = None
         self.next = None
+        self.path = []
 
     def determine_color(self):
         color_mapping = {
@@ -64,20 +65,18 @@ class Board:
             [Node(board[x][y], x, y) for y in range(len(board[0]))]
             for x in range(len(board))
         ]
+        self.board_width = len(self.board[0])
+        self.board_height = len(self.board)
 
     def validPos(self, x, y):
-        if 0 < y < self.board.size and 0 < x < self.board[0].size:
-            return True
-        else:
-            return False
+        return 0 <= x < self.board_width and 0 <= y < self.board_height
 
     def boardFilled(self):
-        flag = True
-        for x in self.board[0].size:
-            for y in self.board.size:
-                if self.board[y][x].color == "Black":
-                    flag = False
-        return flag
+        for row in self.board:
+            for node in row:
+                if node.color == "Black":
+                    return False
+        return True
 
     #Changes the color, previous, and next of node in position I,J
     #The original node is X,Y and the path we are extending to is I,J
@@ -87,21 +86,20 @@ class Board:
     def extendPath(self, x, y, i, j):
         if not self.validPos(i, j):
             raise Exception("Not a valid position")
-        original = self.board[x][y]
-        new = self.board[i][j]
+        original = self.board[y][x]
+        new = self.board[j][i]
         #Makes sure that the nodes are adjacent
-        if np.absolute(x - i) != 1 or np.absolute(y - j) != 1:
+        if  np.abs(x - i) + np.abs(y - j) != 1:
             raise Exception("Not a continous path")
         #Checks for mulitdirectional pathing from a root
-        if original.root and original.path.size > 1:
+        if original.root and len(original.path) >= 1:
             raise Exception("Root path is not empty")
         #Checks for new square being another color's root
         if new.root and original.color != new.color:
             raise Exception("Cannot overide a root")
-        if original.next.color != "Black":
-            raise Exception("Paths cannot diverge")
 
         original.next = new
+        original.path.append(new)
         new.color = original.color
         new.previous = original
         new.next = None
