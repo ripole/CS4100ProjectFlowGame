@@ -2,16 +2,17 @@ import pygame
 from GameRules import Board,test_Board
 
 
+def draw_timer(screen, elapsed_time, font):
+    timer_surface = font.render(f'Time Spent: {elapsed_time // 1000}', True, (0, 0, 0))
+    screen.blit(timer_surface, (10, 10))
+
+
 class View:
 
     def __init__(self, board_obj):
         self.board_obj = board_obj
         self.timer_offset = 30
         self.cell_size = 50
-
-    def draw_timer(self,screen, elapsed_time, font):
-        timer_surface = font.render(f'Time Spent: {elapsed_time // 1000}', True, (0, 0, 0))
-        screen.blit(timer_surface, (10, 10))
 
     def draw_board(self,screen):
         for x in range(self.board_obj.board_width):

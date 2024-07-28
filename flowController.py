@@ -4,16 +4,16 @@ import View as viewClass
 import pygame
 import time
 
+
 class Player:
     def __init__(self, controller):
         self.controller = controller
         self.moves = [
-            (1, 1, 1, 2),  
-            (1, 2, 1, 3),  
-            (1, 3, 1, 4),  
+            (1, 1, 1, 2),
+            (1, 2, 1, 3),
+            (1, 3, 1, 4),
         ]
         self.current_move_index = 0
-
 
     def get_next_move(self):
         if self.current_move_index < len(self.moves):
@@ -30,12 +30,11 @@ class Controller:
         self.timer_offset = 30
         self.cell_size = 50
         self.selected_cell = None
-        self.message = ""  
-        self.message_time = 0  
+        self.message = ""
+        self.message_time = 0
         self.message_duration = 4
         self.agent_active = True
         self.player = Player(self)
-
 
     def isGameOver(self):
         return self.board_obj.gameOver()
@@ -43,10 +42,10 @@ class Controller:
     def makeMove(self, x, y, i, j):
         try:
             self.board_obj.extendPath(x, y, i, j)
-            self.message = "" 
+            self.message = ""
         except Exception as e:
             self.message = str(e)
-            self.message_time = time.time()  
+            self.message_time = time.time()
 
     def display_message(self, screen):
         if self.message and (time.time() - self.message_time) < self.message_duration:
@@ -79,7 +78,9 @@ class Controller:
     def run(self):
         pygame.init()
         pygame.display.set_caption("Flow Game")
-        screen_size = (self.board_obj.board_width * self.cell_size, self.board_obj.board_height * self.cell_size + self.timer_offset)
+        screen_size = (
+            self.board_obj.board_width * self.cell_size,
+            self.board_obj.board_height * self.cell_size + self.timer_offset)
         screen = pygame.display.set_mode(screen_size)
         clock = pygame.time.Clock()
         running = True
@@ -92,22 +93,18 @@ class Controller:
             screen.fill((255, 255, 255))  # White background
             self.view.draw_board(screen)
             elapsed_time = pygame.time.get_ticks()
-            self.view.draw_timer(screen, elapsed_time, pygame.font.Font('freesansbold.ttf', 19))
+            viewClass.draw_timer(screen, elapsed_time, pygame.font.Font('freesansbold.ttf', 19))
             self.display_message(screen)
-
 
             if self.agent_active:
                 self.agent_move()
                 time.sleep(1)
-
 
             pygame.display.flip()
             clock.tick(30)  # FPS
 
         pygame.quit()
 
+
 controller = Controller("Puzzles/8by8Puzzles.txt")
 controller.run()
-
-
-
