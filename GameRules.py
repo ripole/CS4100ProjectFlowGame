@@ -24,7 +24,6 @@ def read_boards(filename):
     return boards
 
 
-
 class Node:
     #initializes a node with x,y coordinates, a value, a color based on value, a boolean root based on value,
     # and the previous and next nodes for its path
@@ -67,6 +66,15 @@ class Board:
         ]
         self.board_width = len(self.board[0])
         self.board_height = len(self.board)
+        self.rootMap = dict()
+        for x in self.board.size:
+            for y in self.board.size:
+                current = self.board[x][y]
+                if current.root:
+                    if current.value in self.rootMap:
+                        self.rootMap[current.value].append(current)
+                    else:
+                        self.rootMap[current.value] = [current]
 
     def validPos(self, x, y):
         return 0 <= x < self.board_width and 0 <= y < self.board_height
@@ -89,7 +97,7 @@ class Board:
         original = self.board[y][x]
         new = self.board[j][i]
         #Makes sure that the nodes are adjacent
-        if  np.abs(x - i) + np.abs(y - j) != 1:
+        if np.abs(x - i) + np.abs(y - j) != 1:
             raise Exception("Not a continous path")
         #Checks for mulitdirectional pathing from a root
         if original.root and len(original.path) >= 1:
@@ -124,6 +132,7 @@ class Board:
                     if not self.connectedPath(x, y):
                         return False
         return True
+
 
 boards = read_boards("Puzzles/8by8Puzzles.txt")
 test_board = boards[0]
