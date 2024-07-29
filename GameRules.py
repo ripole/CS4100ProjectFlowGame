@@ -34,7 +34,7 @@ class Node:
         self.color = self.determine_color()
         #boolean True if it is a root
         self.root = self.value != "."
-        self.previous = None
+        self.prev = None
         self.next = None
         self.path = []
 
@@ -109,16 +109,23 @@ class Board:
         original.next = new
         original.path.append(new)
         new.color = original.color
-        new.previous = original
+        new.prev = original
         new.next = None
 
+    def removeNode(self,x,y):
+        self.board[x][y].value = -1
+        self.board.next = None
+        self.board.previous = None
+
     #Checks to see if starting root is a connected to the ending node
-    def connectedPath(self, x, y):
-        node = self.board[x][y]
+    def connectedPath(self, color):
+        node = self.rootMap[color][0]
+        if not node.next:
+            node = self.rootMap[color][1]
         flag = False
         if not node.root:
             raise Exception("connectedPath must start on root node")
-        while node.next != None:
+        while node.next is not None:
             if node.next.root:
                 flag = True
             node = node.next
@@ -126,11 +133,9 @@ class Board:
 
     #Checks to see if the board is completed
     def gameOver(self):
-        for x in self.board.size:
-            for y in self.board[0].size:
-                if self.board[x][y].root:
-                    if not self.connectedPath(x, y):
-                        return False
+        for color in self.rootMap.keys():
+            if not self.connectedPath(color):
+                return False
         return True
 
 
