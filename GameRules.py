@@ -29,14 +29,10 @@ class Node:
     # and the previous and next nodes for its path
     def __init__(self, value, x, y):
         self.value = value
-        self.x = x
-        self.y = y
+        self.pos = (x,y)
         self.color = self.determine_color()
         #boolean True if it is a root
         self.root = self.value != "."
-        self.prev = None
-        self.next = None
-        self.path = []
 
     def determine_color(self):
         color_mapping = {
@@ -66,15 +62,15 @@ class Board:
         ]
         self.board_width = len(self.board[0])
         self.board_height = len(self.board)
-        self.rootMap = dict()
-        for x in self.board.size:
-            for y in self.board.size:
+        self.paths = dict()
+        for x in range(self.board_width):
+            for y in range(self.board_height):
                 current = self.board[x][y]
                 if current.root:
-                    if current.value in self.rootMap:
-                        self.rootMap[current.value].append(current)
+                    if current.value in self.paths:
+                        self.paths[current.value].append([current])
                     else:
-                        self.rootMap[current.value] = [current]
+                        self.paths[current.value] = [[current]]
 
     def validPos(self, x, y):
         return 0 <= x < self.board_width and 0 <= y < self.board_height
@@ -91,45 +87,58 @@ class Board:
     #Checks to see if I,J is in a valid position
     #Checks the X,Y and I,J are adjacent
     #
-    def extendPath(self, x, y, i, j):
+    def extendPath(self, current_pos, new_pos):
+        x,y = current_pos
+        i,j = new_pos
+
+
         if not self.validPos(i, j):
             raise Exception("Not a valid position")
+        
         original = self.board[y][x]
         new = self.board[j][i]
+
+        paths = self.paths[original.value]
+        for i in range(len(paths)):
+            if original in paths[i]:
+                selected_path = i
         #Makes sure that the nodes are adjacent
         if np.abs(x - i) + np.abs(y - j) != 1:
             raise Exception("Not a continous path")
         #Checks for mulitdirectional pathing from a root
-        if original.root and len(original.path) >= 1:
-            raise Exception("Root path is not empty")
+        if original != paths[selected_path][-1]:
+            raise Exception("No mulitdirectional pathing")
         #Checks for new square being another color's root
-        if new.root and original.color != new.color:
-            raise Exception("Cannot overide a root")
-
-        original.next = new
-        original.path.append(new)
+        if new.color != "Black":
+            raise Exception("Cannot extend past a root")
+        if self.connectedPath(new.value):
+            raise Exception("Path is complete")
         new.color = original.color
-        new.prev = original
-        new.next = None
+        new.value = original.value
+        self.paths[original.color][selected_path].append(new)
 
-    def removeNode(self,x,y):
-        self.board[x][y].value = -1
-        self.board.next = None
-        self.board.previous = None
+    def removeNode(self,pos):
+        x,y = pos
+        node = self.board[y][x]
+        value = node.value
+        paths = self.paths[value]
+        self.board[y][x].value = "."
+        self.board[y][x].color = "Black"
+        for path in paths:
+            if node in path:
+                path.pop()
+
 
     #Checks to see if starting root is a connected to the ending node
-    def connectedPath(self, color):
-        node = self.rootMap[color][0]
-        if not node.next:
-            node = self.rootMap[color][1]
-        flag = False
-        if not node.root:
-            raise Exception("connectedPath must start on root node")
-        while node.next is not None:
-            if node.next.root:
-                flag = True
-            node = node.next
-        return flag
+    def connectedPath(self, value):
+        paths = self.paths(value)
+        first_root_i,first_root_j = paths[0][-1].pos
+        second_root_i,second_root_root_j = paths[1][-1].pos
+        if np.abs(first_root_i - second_root_i) + np.abs(first_root_j - second_root_root_j) != 1:
+            return True
+        else:
+            False
+
 
     #Checks to see if the board is completed
     def gameOver(self):
