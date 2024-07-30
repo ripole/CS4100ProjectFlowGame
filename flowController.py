@@ -91,14 +91,13 @@ class Controller:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.handle_click(pygame.mouse.get_pos())
             screen.fill((255, 255, 255))  # White background
+            if self.agent_active:
+                self.agent_move()
+                time.sleep(1)
             self.view.draw_board(screen)
             elapsed_time = pygame.time.get_ticks()
             viewClass.draw_timer(screen, elapsed_time, pygame.font.Font('freesansbold.ttf', 19))
             self.display_message(screen)
-
-            if self.agent_active:
-                self.agent_move()
-                time.sleep(1)
 
             pygame.display.flip()
             clock.tick(30)  # FPS
