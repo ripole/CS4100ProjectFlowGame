@@ -34,7 +34,7 @@ def board_solver_simulated_annealing(controller):
 
     cooling_rate = .999
 
-    current_score = heuristic(board)
+    current_score = evaluateBoard(board)
     
     roots = board.rootMap
 
@@ -61,7 +61,7 @@ def board_solver_simulated_annealing(controller):
 
         try:
             board.extendPath(selected_root.x,selected_root.y,new_node_i,new_node_j)
-            updated_score = heuristic(board)
+            updated_score = evaluateBoard(board)
 
             if updated_score < current_score or np.random.uniform(0, 1) <= np.exp((current_score - updated_score) / temperature):
                 current_score = updated_score
