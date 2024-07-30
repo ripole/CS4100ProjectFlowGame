@@ -99,9 +99,9 @@ class Board:
         new = self.board[j][i]
 
         paths = self.paths[original.value]
-        for i in range(len(paths)):
-            if original in paths[i]:
-                selected_path = i
+        for k in range(len(paths)):
+            if original in paths[k]:
+                selected_path = k
         #Makes sure that the nodes are adjacent
         if np.abs(x - i) + np.abs(y - j) != 1:
             raise Exception("Not a continous path")
@@ -109,13 +109,13 @@ class Board:
         if original != paths[selected_path][-1]:
             raise Exception("No mulitdirectional pathing")
         #Checks for new square being another color's root
-        if new.color != "Black":
+        if new.color != (0,0,0):
             raise Exception("Cannot extend past a root")
-        if self.connectedPath(new.value):
+        if self.connectedPath(original.value):
             raise Exception("Path is complete")
         new.color = original.color
         new.value = original.value
-        self.paths[original.color][selected_path].append(new)
+        self.paths[original.value][selected_path].append(new)
 
     def removeNode(self,pos):
         x,y = pos
@@ -131,10 +131,10 @@ class Board:
 
     #Checks to see if starting root is a connected to the ending node
     def connectedPath(self, value):
-        paths = self.paths(value)
+        paths = self.paths[value]
         first_root_i,first_root_j = paths[0][-1].pos
         second_root_i,second_root_root_j = paths[1][-1].pos
-        if np.abs(first_root_i - second_root_i) + np.abs(first_root_j - second_root_root_j) != 1:
+        if np.abs(first_root_i - second_root_i) + np.abs(first_root_j - second_root_root_j) == 1:
             return True
         else:
             False
