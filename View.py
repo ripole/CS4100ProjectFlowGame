@@ -11,7 +11,7 @@ def draw_timer(screen, elapsed_time, font):
 
 class View:
     gridSize = 6
-    cellSize = 40
+    cellSize = 50
     screenSize = gridSize * cellSize
     fps = 60
     sleeptime = 0.1

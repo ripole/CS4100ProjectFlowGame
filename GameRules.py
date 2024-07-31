@@ -95,8 +95,8 @@ class Board:
         if not self.validPos(i, j):
             raise Exception("Not a valid position")
         
-        original = self.board[y][x]
-        new = self.board[j][i]
+        original = self.board[x][y]
+        new = self.board[i][j]
 
         paths = self.paths[original.value]
         for k in range(len(paths)):
@@ -119,11 +119,11 @@ class Board:
 
     def removeNode(self,pos):
         x,y = pos
-        node = self.board[y][x]
+        node = self.board[x][y]
         value = node.value
         paths = self.paths[value]
-        self.board[y][x].value = "."
-        self.board[y][x].color = "Black"
+        self.board[x][y].value = "."
+        self.board[x][y].color = (0,0,0)
         for path in paths:
             if node in path:
                 path.pop()
