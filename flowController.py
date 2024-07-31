@@ -7,7 +7,7 @@ from FlowSolver import board_solver_simulated_annealing
 
 class Controller:
     def __init__(self, filename):
-        self.board_obj = modelClass.Board(read_boards(filename)[4])
+        self.board_obj = modelClass.Board(read_boards(filename)[-1])
         self.view = viewClass.View(self.board_obj)
         self.selected_cell = None
         self.message = ""
@@ -94,17 +94,9 @@ class Controller:
             if self.solver_active:
                 board_solver_simulated_annealing(self)
                 self.solver_active = False
-
-            self.screen.fill((255,255,255))
-            self.view.draw_board(self.screen)
-            elapsed_time = pygame.time.get_ticks()
-            viewClass.draw_timer(self.screen, elapsed_time, pygame.font.Font('freesansbold.ttf', 19))
-            self.display_message(self.screen)
-            pygame.display.flip()
-            self.clock.tick(self.fps)
         pygame.quit()
 
 
 
-controller = Controller("Puzzles/8by8Puzzles.txt")
+controller = Controller("Puzzles/janko.txt")
 controller.run()

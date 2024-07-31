@@ -36,22 +36,35 @@ class Node:
 
     def determine_color(self):
         color_mapping = {
-            '.': (0, 0, 0),
-            'A': (255, 0, 0),  # Red
-            'B': (0, 0, 255),  # Blue
-            'C': (0, 255, 0),  # Green
-            'D': (255, 255, 0),  # Yellow
-            'E': (128, 0, 128),  # Purple
-            'F': (255, 165, 0),  # Orange
-            'G': (255, 192, 203),  # Pink
-            'H': (0, 255, 255),  # Cyan
-            'I': (255, 0, 255),  # Magenta
-            'J': (139, 69, 19),  # Brown
-            'K': (128, 128, 128),  # Gray
-            'L': (255, 255, 255),  # White
-            # add colors as needed
+                '.': (0, 0, 0),        # Black for empty cells
+                'A': (255, 0, 0),      # Red
+                'B': (0, 0, 255),      # Blue
+                'C': (0, 255, 0),      # Green
+                'D': (255, 255, 0),    # Yellow
+                'E': (128, 0, 128),    # Purple
+                'F': (255, 165, 0),    # Orange
+                'G': (255, 192, 203),  # Pink
+                'H': (0, 255, 255),    # Cyan
+                'I': (255, 0, 255),    # Magenta
+                'J': (139, 69, 19),    # Brown
+                'K': (128, 128, 128),  # Gray
+                'L': (0, 255, 255),  
+                'M': (173, 255, 47),   
+                'N': (75, 0, 130),     
+                'O': (255, 20, 147),   
+                'P': (218, 165, 32),  
+                'Q': (0, 100, 0),      
+                'R': (255, 69, 0),     
+                'S': (106, 90, 205),   
+                'T': (64, 224, 208),   
+                'U': (210, 105, 30),   
+                'V': (220, 20, 60),    
+                'W': (240, 230, 140),  
+                'X': (255, 105, 180),  
+                'Y': (72, 61, 139),    
+                'Z': (123, 104, 238),
         }
-        return color_mapping.get(self.value, (169, 169, 169))
+        return color_mapping.get(self.value, (np.random.random_integers(0,256), np.random.random_integers(0,256), np.random.random_integers(0,256)))
 
 
 class Board:
@@ -60,8 +73,8 @@ class Board:
             [Node(board[x][y], x, y) for y in range(len(board[0]))]
             for x in range(len(board))
         ]
-        self.board_width = len(self.board[0])
-        self.board_height = len(self.board)
+        self.board_width = len(self.board)
+        self.board_height = len(self.board[0])
         self.paths = dict()
         for x in range(self.board_width):
             for y in range(self.board_height):
