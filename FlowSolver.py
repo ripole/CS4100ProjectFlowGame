@@ -1,18 +1,28 @@
 import numpy as np
-
+import copy
 def evaluateBoard(controller):
+    board = controller.board_obj
+    cornerList = [[0,0], [0,len(board.board)-1], [len(board.board[0])-1, 0],[len(board.board[0])-1, len(board.board)-1]]
+    corners = 0
     completedColors = []
     distance = 0
-    for roots in controller.board_obj.paths.values():
-        if controller.board_obj.connectedPath(roots[0][0].value):
+    for roots in board.paths.values():      
+        pointA = roots[0][-1]
+        pointB = roots[1][-1]
+        if board.connectedPath(roots[0][0].value):
             completedColors.append(roots[0][0].value)
         else:
-            pointA = roots[0][-1]
-            pointB = roots[1][-1]
+            blocked = 0
             Ax,Ay = pointA.pos
             Bx,By = pointB.pos
             distance += abs(Ax - Bx) + abs(Ay - By)
-    return  distance + len(completedColors),completedColors
+            if get_available_moves(board, pointA.pos) is None or get_available_moves(board, pointB.pos) is None :
+                blocked = 1000000
+        for coords in cornerList:
+            if get_available_moves(board, coords) is None:
+                corners = corners + 10 
+            
+    return  distance - len(completedColors) + blocked + corners,completedColors  
 
 def select_incomplete_color(controller, completedColors):
     all_colors = list(controller.board_obj.paths.keys())
@@ -40,6 +50,19 @@ def get_available_moves(board, pos):
                 available_moves.append((new_x, new_y))
     return available_moves
 
+def get_best_available(controller,pos,moves):
+    best_score = 10000000
+    best_move = moves[np.random.choice(range(len(moves)))]
+    for move in moves:
+        controller.makeDummyMove(pos,move)
+        updated_score,completed_colors = evaluateBoard(controller)
+        print(move,updated_score)
+        if updated_score <= best_score:
+            best_score = updated_score
+            best_move = move
+        controller.dummyRemove(move)
+    return best_move
+
 
 def board_solver_simulated_annealing(controller):
     board = controller.board_obj
@@ -53,6 +76,7 @@ def board_solver_simulated_annealing(controller):
 
     current_score,completed_colors = evaluateBoard(controller)
 
+    counter = 0
 
     while temperature > 1:
         
@@ -70,8 +94,7 @@ def board_solver_simulated_annealing(controller):
                 temperature *= cooling_rate
                 continue
 
-            new_pos_index = np.random.choice(range(len(available_moves)))
-            new_pos = available_moves[new_pos_index]
+            new_pos = get_best_available(controller,selected_path[-1].pos,available_moves)
 
             try:
                 controller.makeMove(selected_path[-1].pos, new_pos)

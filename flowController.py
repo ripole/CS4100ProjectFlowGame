@@ -4,10 +4,10 @@ import View as viewClass
 import pygame
 import time
 from FlowSolver import board_solver_simulated_annealing
-
+import copy
 class Controller:
     def __init__(self, filename):
-        self.board_obj = modelClass.Board(read_boards(filename)[-1])
+        self.board_obj = modelClass.Board(read_boards(filename)[1])
         self.view = viewClass.View(self.board_obj)
         self.selected_cell = None
         self.message = ""
@@ -16,7 +16,7 @@ class Controller:
         self.solver_active = False  
         self.clock = pygame.time.Clock()
         self.fps = 30
-        self.sleeptime = .1
+        self.sleeptime = .5
         self.screen_size = (
             self.board_obj.board_width * self.view.cell_size,
             self.board_obj.board_height * self.view.cell_size + self.view.timer_offset)
@@ -35,11 +35,29 @@ class Controller:
             self.message_time = time.time()
             self.refresh()
 
+    def makeDummyMove(self, current_pos, new_pos):
+        try:
+            self.board_obj.extendPath(current_pos, new_pos)
+        except Exception as e:
+            self.message = str(e)
+            self.message_time = time.time()
+            self.refresh()
+
     def remove(self, new_pos):
         try:
             self.board_obj.removeNode(new_pos)
             self.message = ""
             self.refresh()
+        except Exception as e:
+            self.message = str(e)
+            self.message_time = time.time()
+            self.refresh()
+
+    
+    def dummyRemove(self, new_pos):
+        try:
+            self.board_obj.removeNode(new_pos)
+
         except Exception as e:
             self.message = str(e)
             self.message_time = time.time()
@@ -63,6 +81,8 @@ class Controller:
             self.selected_cell = None
         else:
             self.selected_cell = (grid_x, grid_y)
+
+
 
 
 
