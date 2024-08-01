@@ -62,6 +62,14 @@ def get_best_available(controller,pos,moves):
         controller.dummyRemove(move)
     return best_move
 
+def delete_path(controller,delete_path,random):
+    if random:
+        length = np.random.choice(range(len(delete_path)))
+    else:
+        length = len(delete_path)-1
+    for i in range(length):
+            controller.remove(delete_path[-1].pos)
+
 
 def board_solver_simulated_annealing(controller):
     board = controller.board_obj
@@ -85,10 +93,10 @@ def board_solver_simulated_annealing(controller):
         if counter >= 20 and completed_colors:
             index = np.random.choice(range(len(completed_colors)))
             value = completed_colors[index]
-            delete_path = roots[value][0]
-            for i in range(len(delete_path)-1):
-                controller.remove(delete_path[-1].pos)
+            delete = roots[value][0]
+            delete_path(controller,delete,False)
             completed_colors_count -= 1
+            counter = 0
 
         
         selected_color = select_incomplete_color(controller,completed_colors)
@@ -117,10 +125,7 @@ def board_solver_simulated_annealing(controller):
                     controller.remove(new_pos)
                     if not available_moves:
                         if not selected_path[-1].root:
-                            for i in range(np.random.choice(range(len(selected_path)))):
-                                controller.remove(selected_path[-1].pos)
-                
-
+                            delete_path(controller,selected_path,True)
                 temperature *= cooling_rate
             except:
                 temperature *= cooling_rate
