@@ -55,34 +55,37 @@ def board_solver_simulated_annealing(controller):
 
 
     while temperature > 1:
-
-
+        
         selected_color = select_incomplete_color(controller,completed_colors)
 
-        selected_path = roots[selected_color][0]
+        if selected_color != None:
+            selected_path = roots[selected_color][0]
 
-        available_moves = get_available_moves(controller.board_obj, selected_path[-1].pos)
-        
-        if not available_moves:
-            if not selected_path[-1].root:
-                for i in range(np.random.choice(range(len(selected_path)))):
-                    controller.remove(selected_path[-1].pos)
-            temperature *= cooling_rate
-            continue
+            available_moves = get_available_moves(controller.board_obj, selected_path[-1].pos)
+            
+            if not available_moves:
+                if not selected_path[-1].root:
+                    for i in range(np.random.choice(range(len(selected_path)))):
+                        controller.remove(selected_path[-1].pos)
+                temperature *= cooling_rate
+                continue
 
-        new_pos_index = np.random.choice(range(len(available_moves)))
-        new_pos = available_moves[new_pos_index]
+            new_pos_index = np.random.choice(range(len(available_moves)))
+            new_pos = available_moves[new_pos_index]
 
-        try:
-            controller.makeMove(selected_path[-1].pos, new_pos)
-            updated_score,completed_colors = evaluateBoard(controller)
+            try:
+                controller.makeMove(selected_path[-1].pos, new_pos)
+                updated_score,completed_colors = evaluateBoard(controller)
 
-            if updated_score < current_score or np.random.uniform(0, 1) <= np.exp((current_score - updated_score) / temperature):
-                current_score = updated_score
-            else:
-                controller.remove(new_pos)
-            temperature *= cooling_rate
-        except:
-            temperature *= cooling_rate
+                if updated_score < current_score or np.random.uniform(0, 1) <= np.exp((current_score - updated_score) / temperature):
+                    current_score = updated_score
+                else:
+                    controller.remove(new_pos)
+                temperature *= cooling_rate
+            except:
+                temperature *= cooling_rate
+
+        else:
+            break
 
 
