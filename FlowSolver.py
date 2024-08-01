@@ -17,7 +17,7 @@ def evaluateBoard(controller):
             Bx,By = pointB.pos
             distance += abs(Ax - Bx) + abs(Ay - By)
             if len(get_available_moves(board, pointA.pos)) == 0 or len(get_available_moves(board, pointB.pos)) == 0:
-                blocked = 1000000
+                blocked = 1000
         for coords in cornerList:
             if get_available_moves(board, coords) is None:
                 corners = corners + 10 
@@ -53,14 +53,17 @@ def get_available_moves(board, pos):
 def get_best_available(controller,pos,moves):
     best_score = 10000000
     best_move = moves[np.random.choice(range(len(moves)))]
-    for move in moves:
-        controller.makeDummyMove(pos,move)
-        updated_score,completed_colors = evaluateBoard(controller)
-        if updated_score <= best_score:
-            best_score = updated_score
-            best_move = move
-        controller.dummyRemove(move)
-    return best_move
+    if np.random.uniform(0, 1) < .1:
+        return best_move
+    else:
+        for move in moves:
+            controller.makeDummyMove(pos,move)
+            updated_score,completed_colors = evaluateBoard(controller)
+            if updated_score <= best_score:
+                best_score = updated_score
+                best_move = move
+            controller.dummyRemove(move)
+        return best_move
 
 def delete_path(controller,delete_path,random):
     if random:

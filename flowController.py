@@ -7,7 +7,7 @@ from FlowSolver import board_solver_simulated_annealing
 import copy
 class Controller:
     def __init__(self, filename):
-        self.board_obj = modelClass.Board(read_boards(filename)[4])
+        self.board_obj = modelClass.Board(read_boards(filename)[6])
         self.view = viewClass.View(self.board_obj)
         self.selected_cell = None
         self.message = ""
