@@ -20,9 +20,14 @@ def evaluateBoard(controller):
                 blocked = 1000
         for coords in cornerList:
             if get_available_moves(board, coords) is None:
-                corners = corners + 10 
+                corners = corners + 10
+    empty_cell_score = 0
+    for row in board.board:
+        for cell in row:
+            if cell.color == (0, 0, 0):
+                empty_cell_score += 5
             
-    return  distance - len(completedColors) + blocked + corners,completedColors  
+    return  distance - len(completedColors) + blocked + corners + empty_cell_score,completedColors
 
 def select_incomplete_color(controller, completedColors):
     all_colors = list(controller.board_obj.paths.keys())
@@ -82,7 +87,7 @@ def board_solver_simulated_annealing(controller):
 
     temperature = 100
 
-    cooling_rate = .99
+    cooling_rate = .9
 
     current_score,completed_colors = evaluateBoard(controller)
 
