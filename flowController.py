@@ -9,7 +9,7 @@ import copy
 
 class Controller:
     def __init__(self, filename):
-        self.board_obj = modelClass.Board(read_boards(filename)[1])
+        self.board_obj = modelClass.Board(read_boards(filename)[0])
         self.view = viewClass.View(self.board_obj)
         self.selected_cell = None
         self.message = ""
@@ -18,7 +18,7 @@ class Controller:
         self.solver_active = False
         self.clock = pygame.time.Clock()
         self.fps = 30
-        self.sleeptime = 0.05
+        self.sleeptime = 0.005
         self.screen_size = (
             self.board_obj.board_width * self.view.cell_size,
             self.board_obj.board_height * self.view.cell_size + self.view.timer_offset,

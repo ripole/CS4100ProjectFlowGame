@@ -64,7 +64,7 @@ class Node:
                 'Y': (72, 61, 139),    
                 'Z': (123, 104, 238),
         }
-        return color_mapping.get(self.value, (np.random.random_integers(0,256), np.random.random_integers(0,256), np.random.random_integers(0,256)))
+        return color_mapping.get(self.value, (np.random.random_integers(0,255), np.random.random_integers(0,255), np.random.random_integers(0,255)))
 
 
 class Board:
@@ -140,6 +140,13 @@ class Board:
         for path in paths:
             if node in path:
                 path.pop()
+    
+    def find_node_path(self,node):
+        value = node.value
+        paths = self.paths[value]
+        for path in paths:
+            if node in path:
+                return path
 
 
     #Checks to see if starting root is a connected to the ending node
