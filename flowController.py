@@ -5,21 +5,24 @@ import pygame
 import time
 from FlowSolver import board_solver_simulated_annealing
 import copy
+
+
 class Controller:
     def __init__(self, filename):
-        self.board_obj = modelClass.Board(read_boards(filename)[6])
+        self.board_obj = modelClass.Board(read_boards(filename)[1])
         self.view = viewClass.View(self.board_obj)
         self.selected_cell = None
         self.message = ""
         self.message_time = 0
         self.message_duration = 3
-        self.solver_active = False  
+        self.solver_active = False
         self.clock = pygame.time.Clock()
         self.fps = 30
-        self.sleeptime = .01
+        self.sleeptime = 0.05
         self.screen_size = (
             self.board_obj.board_width * self.view.cell_size,
-            self.board_obj.board_height * self.view.cell_size + self.view.timer_offset)
+            self.board_obj.board_height * self.view.cell_size + self.view.timer_offset,
+        )
         self.screen = pygame.display.set_mode(self.screen_size)
 
     def isGameOver(self):
@@ -53,7 +56,6 @@ class Controller:
             self.message_time = time.time()
             self.refresh()
 
-    
     def dummyRemove(self, new_pos):
         try:
             self.board_obj.removeNode(new_pos)
@@ -65,9 +67,13 @@ class Controller:
 
     def display_message(self, screen):
         if self.message and (time.time() - self.message_time) < self.message_duration:
-            font = pygame.font.Font('freesansbold.ttf', 19)
-            text = font.render(self.message, True, (255, 0, 0))  # Red color for error message
-            screen.blit(text, (10, self.board_obj.board_height * self.view.cell_size + 5))
+            font = pygame.font.Font("freesansbold.ttf", 19)
+            text = font.render(
+                self.message, True, (255, 0, 0)
+            )  # Red color for error message
+            screen.blit(
+                text, (10, self.board_obj.board_height * self.view.cell_size + 5)
+            )
 
     def handle_click(self, pos):
         y, x = pos
@@ -82,21 +88,18 @@ class Controller:
         else:
             self.selected_cell = (grid_x, grid_y)
 
-
-
-
-
     def refresh(self):
-        self.screen.fill((255,255,255))
+        self.screen.fill((255, 255, 255))
         self.view.draw_board(self.screen)
         elapsed_time = pygame.time.get_ticks()
-        viewClass.draw_timer(self.screen, elapsed_time, pygame.font.Font('freesansbold.ttf', 19))
+        viewClass.draw_timer(
+            self.screen, elapsed_time, pygame.font.Font("freesansbold.ttf", 19)
+        )
         self.display_message(self.screen)
         pygame.display.flip()
         self.clock.tick(self.fps)
         time.sleep(self.sleeptime)
-        
-    
+
     def run(self):
         pygame.init()
         pygame.display.set_caption("Flow Game")
@@ -115,7 +118,6 @@ class Controller:
                 board_solver_simulated_annealing(self)
                 self.solver_active = False
         pygame.quit()
-
 
 
 controller = Controller("Puzzles/janko.txt")

@@ -1,22 +1,33 @@
 import numpy as np
+import random
 import copy
+
+
 def evaluateBoard(controller):
     board = controller.board_obj
-    cornerList = [[0,0], [0,len(board.board)-1], [len(board.board[0])-1, 0],[len(board.board[0])-1, len(board.board)-1]]
+    cornerList = [
+        [0, 0],
+        [0, len(board.board) - 1],
+        [len(board.board[0]) - 1, 0],
+        [len(board.board[0]) - 1, len(board.board) - 1],
+    ]
     corners = 0
     completedColors = []
     distance = 0
     blocked = 0
-    for roots in board.paths.values():      
+    for roots in board.paths.values():
         pointA = roots[0][-1]
         pointB = roots[1][-1]
         if board.connectedPath(roots[0][0].value):
             completedColors.append(roots[0][0].value)
         else:
-            Ax,Ay = pointA.pos
-            Bx,By = pointB.pos
+            Ax, Ay = pointA.pos
+            Bx, By = pointB.pos
             distance += abs(Ax - Bx) + abs(Ay - By)
-            if len(get_available_moves(board, pointA.pos)) == 0 or len(get_available_moves(board, pointB.pos)) == 0:
+            if (
+                len(get_available_moves(board, pointA.pos)) == 0
+                or len(get_available_moves(board, pointB.pos)) == 0
+            ):
                 blocked = 1000
         for coords in cornerList:
             if get_available_moves(board, coords) is None:
@@ -26,8 +37,11 @@ def evaluateBoard(controller):
         for cell in row:
             if cell.color == (0, 0, 0):
                 empty_cell_score += 5
-            
-    return  distance - len(completedColors) + blocked + corners + empty_cell_score,completedColors
+    return (
+        distance - len(completedColors) + blocked + corners + empty_cell_score,
+        completedColors,
+    )
+
 
 def select_incomplete_color(controller, completedColors):
     all_colors = list(controller.board_obj.paths.keys())
@@ -36,15 +50,54 @@ def select_incomplete_color(controller, completedColors):
         return np.random.choice(incomplete_colors)
     else:
         return None  # All colors are complete
-    
+
+
+# finding the most constrained path. Returns the color value and then which path it is in
+def mostConstrainedPath(controller):
+    board = controller.board_obj
+    minMoves = 5
+    minValue = [None, None]
+    for roots in board.paths.values():
+        if not board.connectedPath(roots[0][0].value):
+            pointA = roots[0][-1]
+            pointB = roots[1][-1]
+            Avalue = len(get_available_moves(board, pointA.pos))
+            Bvalue = len(get_available_moves(board, pointB.pos))
+            if Avalue < minMoves:
+                minMoves = Avalue
+                minValue = [pointA.value, 0]
+            if Bvalue < minMoves:
+                minMoves = Bvalue
+                minValue = [pointB.value, 1]
+    return minValue
+
+
+# Returns the path list of the closest paths
+def findClosestPath(controller):
+    board = controller.board_obj
+    minDist = 9999999999
+    minValue = None
+    for roots in board.paths.values():
+        if not board.connectedPath(roots[0][0].value):
+            pointA = roots[0][-1]
+            pointB = roots[1][-1]
+            Ax, Ay = pointA.pos
+            Bx, By = pointB.pos
+            distance = abs(Ax - Bx) + abs(Ay - By)
+            if distance < minDist:
+                minDist = distance
+                minValue = roots[0][0].value
+    return minValue
+
+
 def get_available_moves(board, pos):
     moves = {
         0: (-1, 0),  # up
         1: (1, 0),  # down
         2: (0, -1),  # left
-        3: (0, 1)  # right
+        3: (0, 1),  # right
     }
-    
+
     available_moves = []
     x, y = pos
     for move in moves.values():
@@ -55,28 +108,30 @@ def get_available_moves(board, pos):
                 available_moves.append((new_x, new_y))
     return available_moves
 
-def get_best_available(controller,pos,moves):
+
+def get_best_available(controller, pos, moves):
     best_score = 10000000
     best_move = moves[np.random.choice(range(len(moves)))]
-    if np.random.uniform(0, 1) < .1:
+    if np.random.uniform(0, 1) < 0.1:
         return best_move
     else:
         for move in moves:
-            controller.makeDummyMove(pos,move)
-            updated_score,completed_colors = evaluateBoard(controller)
+            controller.makeDummyMove(pos, move)
+            updated_score, completed_colors = evaluateBoard(controller)
             if updated_score <= best_score:
                 best_score = updated_score
                 best_move = move
             controller.dummyRemove(move)
         return best_move
 
-def delete_path(controller,delete_path,random):
+
+def delete_path(controller, delete_path, random):
     if random:
         length = np.random.choice(range(len(delete_path)))
     else:
-        length = len(delete_path)-1
+        length = len(delete_path) - 1
     for i in range(length):
-            controller.remove(delete_path[-1].pos)
+        controller.remove(delete_path[-1].pos)
 
 
 def board_solver_simulated_annealing(controller):
@@ -84,17 +139,15 @@ def board_solver_simulated_annealing(controller):
 
     roots = board.paths
 
-
     temperature = 100
 
-    cooling_rate = .9
+    cooling_rate = 0.99
 
-    current_score,completed_colors = evaluateBoard(controller)
+    current_score, completed_colors = evaluateBoard(controller)
 
     counter = 0
 
     completed_colors_count = 0
-    
 
     while temperature > 1:
 
@@ -102,38 +155,49 @@ def board_solver_simulated_annealing(controller):
             index = np.random.choice(range(len(completed_colors)))
             value = completed_colors[index]
             delete = roots[value][0]
-            delete_path(controller,delete,False)
+            delete_path(controller, delete, False)
             completed_colors_count -= 1
             counter = 0
 
-        
-        selected_color = select_incomplete_color(controller,completed_colors)
+        selected_color = mostConstrainedPath(controller)
+        random_color = select_incomplete_color(controller, completed_colors)
 
         if selected_color != None:
-            selected_path = roots[selected_color][0]
+            selected_path = roots[selected_color[0]][selected_color[1]]
 
-            available_moves = get_available_moves(controller.board_obj, selected_path[-1].pos)
-           
+            available_moves = get_available_moves(
+                controller.board_obj, selected_path[-1].pos
+            )
 
-            new_pos = get_best_available(controller,selected_path[-1].pos,available_moves)
+            # This writes a check to see if
+            if available_moves is None:
+                d
+
+            best_pos = get_best_available(
+                controller, selected_path[-1].pos, available_moves
+            )
+            print(available_moves)
+            rand_pos = random.choice(available_moves)
 
             try:
-                controller.makeMove(selected_path[-1].pos, new_pos)
-                updated_score,completed_colors = evaluateBoard(controller)
-                print(completed_colors_count,len(completed_colors))
+                controller.makeMove(selected_path[-1].pos, best_pos)
+                best_score, completed_colors = evaluateBoard(controller)
+                controller.remove(best_pos)
+
+                controller.makeMove(selected_path[-1].pos, rand_pos)
+                rand_score, completed_colors = evaluateBoard(controller)
+                controller.remove(rand_pos)
 
                 if completed_colors_count < len(completed_colors):
                     completed_colors_count += 1
                     counter = 0
 
-                if updated_score < current_score or np.random.uniform(0, 1) <= np.exp((current_score - updated_score) / temperature):
-                    current_score = updated_score
-                else:
-                    available_moves = get_available_moves(controller.board_obj, new_pos)
-                    controller.remove(new_pos)
-                    if not available_moves:
-                        if not selected_path[-1].root:
-                            delete_path(controller,selected_path,True)
+                if rand_score < best_score or np.random.uniform(0, 1) <= np.exp(
+                    (best_score - rand_score) / temperature
+                ):
+                    best_pos = rand_pos
+
+                controller.makeMove(selected_path[-1].pos, best_pos)
                 temperature *= cooling_rate
             except:
                 temperature *= cooling_rate
@@ -141,5 +205,3 @@ def board_solver_simulated_annealing(controller):
 
         else:
             break
-
-
