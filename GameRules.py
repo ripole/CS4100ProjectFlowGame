@@ -162,7 +162,7 @@ class Board:
 
     #Checks to see if the board is completed
     def gameOver(self):
-        for color in self.rootMap.keys():
+        for color in self.paths.keys():
             if not self.connectedPath(color):
                 return False
         return True
