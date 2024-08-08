@@ -38,6 +38,14 @@ class View:
         for y in range(self.board_obj.board_height):
             pygame.draw.line(screen, (200, 200, 200), (y * self.cell_size, self.timer_offset),
                             (y * self.cell_size, self.board_obj.board_height * self.cell_size + self.timer_offset))
+        # Draw the black outline around the last node of each path
+        for paths in self.board_obj.paths.values():
+            for path in paths:
+                last_node = path[-1]  # Get the last node in the path
+                x, y = last_node.pos
+                color = last_node.color
+                darker_color = tuple(max(c // 2, 0) for c in color)  # Create a darker shade of the color
+                pygame.draw.rect(screen, darker_color, pygame.Rect(y * self.cell_size, x * self.cell_size + self.timer_offset, self.cell_size, self.cell_size), 5)
 
     def drawGrid(self):
         for x in range(0, self.screenSize, self.cellSize):

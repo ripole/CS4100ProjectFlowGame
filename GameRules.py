@@ -1,5 +1,6 @@
 import numpy as np
 
+moves_list = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 def read_boards(filename):
     with open(filename, 'r') as file:
@@ -158,6 +159,62 @@ class Board:
             return True
         else:
             False
+
+    def get_available_moves(self, pos):
+        available_moves = []
+        x, y = pos
+        for i, j in moves_list:
+            new_x, new_y = x + i, y + j
+            if self.validPos(new_x, new_y):
+                neighbor_color = self.board[new_x][new_y].color
+                if neighbor_color == (0, 0, 0):
+                    available_moves.append((new_x, new_y))
+        return available_moves
+
+    def get_adjacent_empty_spaces(self, pos):
+        x, y = pos
+        adjacent_empty_spaces = []
+        for i, j in moves_list:
+            new_x, new_y = x + i, y + j
+            if self.validPos(new_x, new_y) and self.board[new_x][new_y].color == (0, 0, 0):
+                adjacent_empty_spaces.append((new_x, new_y))
+        return adjacent_empty_spaces
+    
+
+    def is_wall_or_completed_path(self, pos):
+        x, y = pos
+        if not self.validPos(x, y):
+            return True  # Out of bounds is considered a wall
+        node = self.board[x][y]
+        return node.color != (0, 0, 0)  # Non-black cells are considered part of a completed path
+
+    def is_dead_end(self, pos):
+        x, y = pos
+        if not self.validPos(x, y):
+            return False  # Out of bounds can't be a dead end
+        if self.board[x][y].color != (0, 0, 0):
+            return False  # Only consider free cells
+
+        # Check surrounding cells
+        surrounding_walls_or_paths = 0
+        for i, j in moves_list:
+            new_x, new_y = x + i, y + j
+            if self.is_wall_or_completed_path((new_x, new_y)):
+                surrounding_walls_or_paths += 1
+
+        return surrounding_walls_or_paths >= 3
+    
+    def has_possible_moves(self):
+        for roots in self.paths.values():
+            if self.connectedPath(roots[0][0].value):
+                continue
+            else:
+                for path in roots:
+                    start_pos = path[-1].pos
+                    available_moves = self.get_available_moves(start_pos)
+                    if not available_moves:
+                        return False,path
+        return True,path
 
 
     #Checks to see if the board is completed

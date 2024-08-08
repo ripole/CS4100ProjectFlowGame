@@ -7,7 +7,7 @@ from FlowSolver import board_solver_simulated_annealing
 import copy
 
 
-class Controller:
+class GuiController:
     def __init__(self, filename):
         self.board_obj = modelClass.Board(read_boards(filename)[0])
         self.view = viewClass.View(self.board_obj)
@@ -54,7 +54,7 @@ class Controller:
         except Exception as e:
             self.message = str(e)
             self.message_time = time.time()
-            self.refresh()
+            # self.refresh()
 
     def dummyRemove(self, new_pos):
         try:
@@ -120,5 +120,43 @@ class Controller:
         pygame.quit()
 
 
-controller = Controller("Puzzles/janko.txt")
+class NoGuiController:
+    def __init__(self, filename):
+        self.board_obj = modelClass.Board(read_boards(filename)[40])
+
+    def isGameOver(self):
+        return self.board_obj.gameOver()
+
+    def makeMove(self, current_pos, new_pos):
+        try:
+            self.board_obj.extendPath(current_pos, new_pos)
+        except Exception as e:
+            print(e)
+
+    def makeDummyMove(self, current_pos, new_pos):
+        try:
+            self.board_obj.extendPath(current_pos, new_pos)
+        except Exception as e:
+            print(e)
+
+    def remove(self, new_pos):
+        try:
+            self.board_obj.removeNode(new_pos)
+        except Exception as e:
+            print(e)
+
+    def dummyRemove(self, new_pos):
+        try:
+            self.board_obj.removeNode(new_pos)
+        except Exception as e:
+            print(e)
+
+    def run(self):
+        board_solver_simulated_annealing(self)
+
+
+ 
+
+
+controller = GuiController("Puzzles/janko.txt")
 controller.run()
