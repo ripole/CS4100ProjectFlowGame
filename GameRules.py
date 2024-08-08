@@ -92,7 +92,7 @@ class Board:
     def boardFilled(self):
         for row in self.board:
             for node in row:
-                if node.color == "Black":
+                if node.color == (0, 0, 0):
                     return False
         return True
 
@@ -158,7 +158,7 @@ class Board:
         if np.abs(first_root_i - second_root_i) + np.abs(first_root_j - second_root_root_j) == 1:
             return True
         else:
-            False
+            return False
 
     def get_available_moves(self, pos):
         available_moves = []
@@ -214,7 +214,7 @@ class Board:
                     available_moves = self.get_available_moves(start_pos)
                     if not available_moves:
                         return False,path
-        return True,path
+        return True,(0,0)
 
 
     #Checks to see if the board is completed

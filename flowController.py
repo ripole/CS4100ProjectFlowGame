@@ -9,7 +9,7 @@ import copy
 
 class GuiController:
     def __init__(self, filename):
-        self.board_obj = modelClass.Board(read_boards(filename)[0])
+        self.board_obj = modelClass.Board(read_boards(filename)[12])
         self.view = viewClass.View(self.board_obj)
         self.selected_cell = None
         self.message = ""
