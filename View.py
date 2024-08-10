@@ -4,8 +4,8 @@ import time
 from GameRules import Board,test_Board
 
 
-def draw_timer(screen, elapsed_time, font):
-    timer_surface = font.render(f'Time Spent: {elapsed_time // 1000}', True, (0, 0, 0))
+def draw_timer(screen, elapsed_time, board_ind, font):
+    timer_surface = font.render(f'Time Spent: {elapsed_time // 1000} on Board Number {board_ind}', True, (0, 0, 0))
     screen.blit(timer_surface, (10, 10))
 
 

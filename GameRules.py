@@ -70,10 +70,10 @@ class Node:
 
 class Board:
     def __init__(self, board):
-        self.board = [
+        self.board = np.array([
             [Node(board[x][y], x, y) for y in range(len(board[0]))]
             for x in range(len(board))
-        ]
+        ])
         self.board_width = len(self.board)
         self.board_height = len(self.board[0])
         self.paths = dict()
@@ -215,6 +215,13 @@ class Board:
                     if not available_moves:
                         return False,path
         return True,(0,0)
+    
+    def get_incomplete_colors(self):
+        incomplete_colors = []
+        for roots in self.paths.values():
+            if not self.connectedPath(roots[0][0].value):
+                incomplete_colors.append(roots[0][0].value)
+        return incomplete_colors
 
 
     #Checks to see if the board is completed
