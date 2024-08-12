@@ -60,6 +60,7 @@ def evaluateBoard(controller):
         - 25 * len(completedColors)
         + blocked
         + corners
+        + 4 * adjacent
         + empty_cell_score)
 
 def possiblePaths(controller):
@@ -379,7 +380,6 @@ def board_solver_simulated_annealing(controller):
                     continue
                 temperature *= 1.1
             stranded_status = find_stranded_colors_with_black_mask(controller)
-
             for color, stranded in stranded_status.items():
                 if stranded:
                     keys = list(board.paths.keys())

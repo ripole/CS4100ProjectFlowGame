@@ -44,8 +44,14 @@ class View:
                 last_node = path[-1]  # Get the last node in the path
                 x, y = last_node.pos
                 color = last_node.color
+                root_node = path[0]  # Get the last node in the path
+                rx, ry = root_node.pos
+                center_x = ry * self.cell_size + self.cell_size // 2
+                center_y = rx * self.cell_size + self.timer_offset + self.cell_size // 2
                 darker_color = tuple(max(c // 2, 0) for c in color)  # Create a darker shade of the color
-                pygame.draw.rect(screen, darker_color, pygame.Rect(y * self.cell_size, x * self.cell_size + self.timer_offset, self.cell_size, self.cell_size), 5)
+                pygame.draw.circle(screen, darker_color,(center_x,center_y), self.cell_size // 2)
+                if len(path) > 1:
+                    pygame.draw.rect(screen, darker_color, pygame.Rect(y * self.cell_size, x * self.cell_size + self.timer_offset, self.cell_size, self.cell_size), 5)
 
     def drawGrid(self):
         for x in range(0, self.screenSize, self.cellSize):

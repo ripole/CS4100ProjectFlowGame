@@ -11,7 +11,7 @@ class BaseController:
     def __init__(self, filename):
         board_configs = read_boards(filename)
         self.boards = [modelClass.Board(config) for config in board_configs]
-        self.current_board_index = 64
+        self.current_board_index = 65
         self.board_obj = self.boards[self.current_board_index]
         self.message = ""
 
