@@ -49,7 +49,7 @@ class Node:
                 'I': (255, 0, 255),    # Magenta
                 'J': (139, 69, 19),    # Brown
                 'K': (128, 128, 128),  # Gray
-                'L': (0, 255, 255),  
+                'L': (80, 40, 235),  
                 'M': (173, 255, 47),   
                 'N': (75, 0, 130),     
                 'O': (255, 20, 147),   
@@ -230,6 +230,16 @@ class Board:
             if not self.connectedPath(color):
                 return False
         return True
+    
+    def percentComplete(self):
+        count = 0
+        filled = 0
+        for row in self.board:
+            for node in row:
+                if node.color != (0, 0, 0):
+                    filled += 1
+                count += 1
+        return filled / count
 
 
 boards = read_boards("Puzzles/8by8Puzzles.txt")
