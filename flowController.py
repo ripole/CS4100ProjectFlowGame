@@ -7,19 +7,24 @@ from FlowSolver import board_solver_simulated_annealing
 import pandas as pd
 
 
-
+# There are two controllers in the class where you can run the game
+# The Gui controller which will have the agent start running when you click
+# The button s and will cycle through the boards and the no gui controller
+# which will just run through the boards each board run three times and it
+# will display the time it took and completion percentage average it took
+# to run the board.
 class BaseController:
     def __init__(self, filename):
         """Initialize the controller with boards from the given file."""
         board_configs = read_boards(filename)
         self.boards = [modelClass.Board(config) for config in board_configs]
-        self.current_board_index = 59
+        self.current_board_index = 0
         self.board_obj = self.boards[self.current_board_index]
         self.message = ""
 
     def set_current_board(self, index):
         """Set the current board to the one at the specified index in the list."""
-        if 0 <= index < len(self.boards):
+        if 0 <= index < len(self.boards)-1:
             self.current_board_index = index
             self.board_obj = self.boards[self.current_board_index]
         else:
